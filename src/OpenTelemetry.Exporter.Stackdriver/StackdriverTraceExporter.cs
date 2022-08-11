@@ -1,4 +1,4 @@
-﻿// <copyright file="StackdriverTraceExporter.cs" company="OpenTelemetry Authors">
+// <copyright file="StackdriverTraceExporter.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +21,9 @@ using System.Reflection;
 using Google.Api.Gax.Grpc;
 using Google.Cloud.Trace.V2;
 using Grpc.Core;
-using OpenTelemetry.Contrib.Exporter.Stackdriver.Implementation;
+using OpenTelemetry.Exporter.Stackdriver.Implementation;
 
-namespace OpenTelemetry.Contrib.Exporter.Stackdriver
+namespace OpenTelemetry.Exporter.Stackdriver
 {
     /// <summary>
     /// Exports a group of spans to Stackdriver.

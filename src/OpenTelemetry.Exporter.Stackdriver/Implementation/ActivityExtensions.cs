@@ -1,4 +1,4 @@
-﻿// <copyright file="ActivityExtensions.cs" company="OpenTelemetry Authors">
+// <copyright file="ActivityExtensions.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ using Google.Cloud.Trace.V2;
 using Google.Protobuf.WellKnownTypes;
 using OpenTelemetry.Trace;
 
-namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Implementation
+namespace OpenTelemetry.Exporter.Stackdriver.Implementation
 {
     internal static class ActivityExtensions
     {

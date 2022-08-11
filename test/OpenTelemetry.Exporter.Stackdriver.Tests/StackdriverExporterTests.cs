@@ -1,4 +1,4 @@
-﻿// <copyright file="StackdriverExporterTests.cs" company="OpenTelemetry Authors">
+// <copyright file="StackdriverExporterTests.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,14 +22,13 @@ using Google.Api.Gax.Grpc;
 using Google.Cloud.Trace.V2;
 using Grpc.Core;
 using Moq;
-using OpenTelemetry.Contrib.Exporter.Stackdriver.Tests.Shared;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 using Xunit;
 using Status = Grpc.Core.Status;
 
-namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
+namespace OpenTelemetry.Exporter.Stackdriver.Tests
 {
     public class StackdriverExporterTests
     {
@@ -94,6 +93,7 @@ namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
         {
             Exception exception = null;
             ExportResult result = ExportResult.Success;
+            var exportedItems = new List<Activity>();
             const string ActivitySourceName = "stackdriver.test";
             var source = new ActivitySource(ActivitySourceName);
             var traceClientMock = new Mock<TraceServiceClient>(MockBehavior.Strict);
@@ -102,9 +102,8 @@ namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
                 .Throws(new RpcException(Status.DefaultCancelled))
                 .Verifiable($"{nameof(TraceServiceClient.BatchWriteSpans)} was never called");
             var activityExporter = new StackdriverTraceExporter("test", traceClientMock.Object);
-            var testExporter = new TestExporter<Activity>(RunTest);
 
-            var processor = new BatchActivityExportProcessor(testExporter);
+            var processor = new BatchActivityExportProcessor(new InMemoryExporter<Activity>(exportedItems));
 
             for (int i = 0; i < 10; i++)
             {
@@ -113,6 +112,9 @@ namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
             }
 
             processor.Shutdown();
+
+            var batch = new Batch<Activity>(exportedItems.ToArray(), exportedItems.Count);
+            RunTest(batch);
 
             void RunTest(Batch<Activity> batch)
             {
@@ -132,6 +134,7 @@ namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
         {
             Exception exception = null;
             ExportResult result = ExportResult.Failure;
+            var exportedItems = new List<Activity>();
             const string ActivitySourceName = "stackdriver.test";
             var source = new ActivitySource(ActivitySourceName);
             var traceClientMock = new Mock<TraceServiceClient>(MockBehavior.Strict);
@@ -139,9 +142,8 @@ namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
                     x.BatchWriteSpans(It.IsAny<BatchWriteSpansRequest>(), It.IsAny<CallSettings>()))
                 .Verifiable($"{nameof(TraceServiceClient.BatchWriteSpans)} was never called");
             var activityExporter = new StackdriverTraceExporter("test", traceClientMock.Object);
-            var testExporter = new TestExporter<Activity>(RunTest);
 
-            var processor = new BatchActivityExportProcessor(testExporter);
+            var processor = new BatchActivityExportProcessor(new InMemoryExporter<Activity>(exportedItems));
 
             for (int i = 0; i < 10; i++)
             {
@@ -150,6 +152,9 @@ namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
             }
 
             processor.Shutdown();
+
+            var batch = new Batch<Activity>(exportedItems.ToArray(), exportedItems.Count);
+            RunTest(batch);
 
             void RunTest(Batch<Activity> batch)
             {

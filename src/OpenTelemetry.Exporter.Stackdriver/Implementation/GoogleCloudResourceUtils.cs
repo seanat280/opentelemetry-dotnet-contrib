@@ -1,4 +1,4 @@
-﻿// <copyright file="GoogleCloudResourceUtils.cs" company="OpenTelemetry Authors">
+// <copyright file="GoogleCloudResourceUtils.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ using System;
 using System.IO;
 using Google.Api;
 
-namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Implementation
+namespace OpenTelemetry.Exporter.Stackdriver.Implementation
 {
     /// <summary>
     /// Utility methods for working with Google Cloud Resources.

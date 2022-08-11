@@ -1,4 +1,4 @@
-﻿// <copyright file="GenevaTraceExporter.cs" company="OpenTelemetry Authors">
+// <copyright file="GenevaTraceExporter.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,10 +69,6 @@ public class GenevaTraceExporter : GenevaBaseExporter<Activity>
                 var unixDomainSocketPath = connectionStringBuilder.ParseUnixDomainSocketPath();
                 this.m_dataTransport = new UnixDomainSocketDataTransport(unixDomainSocketPath);
                 break;
-            case TransportProtocol.Tcp:
-                throw new ArgumentException("TCP transport is not supported yet.");
-            case TransportProtocol.Udp:
-                throw new ArgumentException("UDP transport is not supported yet.");
             default:
                 throw new ArgumentOutOfRangeException(nameof(connectionStringBuilder.Protocol));
         }
@@ -146,26 +142,6 @@ public class GenevaTraceExporter : GenevaBaseExporter<Activity>
         foreach (var entry in options.PrepopulatedFields)
         {
             var value = entry.Value;
-            switch (value)
-            {
-                case bool vb:
-                case byte vui8:
-                case sbyte vi8:
-                case short vi16:
-                case ushort vui16:
-                case int vi32:
-                case uint vui32:
-                case long vi64:
-                case ulong vui64:
-                case float vf:
-                case double vd:
-                case string vs:
-                    break;
-                default:
-                    value = options.ConvertToJson(value);
-                    break;
-            }
-
             cursor = AddPartAField(buffer, cursor, entry.Key, value);
             this.m_cntPrepopulatedFields += 1;
         }
@@ -200,7 +176,7 @@ public class GenevaTraceExporter : GenevaBaseExporter<Activity>
             }
             catch (Exception ex)
             {
-                ExporterEventSource.Log.ExporterException(ex); // TODO: preallocate exception or no exception
+                ExporterEventSource.Log.FailedToSendTraceData(ex); // TODO: preallocate exception or no exception
                 result = ExportResult.Failure;
             }
         }
@@ -224,7 +200,7 @@ public class GenevaTraceExporter : GenevaBaseExporter<Activity>
             }
             catch (Exception ex)
             {
-                ExporterEventSource.Log.ExporterException(ex);
+                ExporterEventSource.Log.ExporterException("GenevaTraceExporter Dispose failed.", ex);
             }
         }
 

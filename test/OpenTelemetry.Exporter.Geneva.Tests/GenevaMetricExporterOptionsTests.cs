@@ -1,4 +1,4 @@
-﻿// <copyright file="GenevaMetricExporterOptionsTests.cs" company="OpenTelemetry Authors">
+// <copyright file="GenevaMetricExporterOptionsTests.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,6 +68,28 @@ namespace OpenTelemetry.Exporter.Geneva.Tests
 
             expectedErrorMessage = $"Value provided for the dimension: DimensionKey exceeds the maximum allowed limit of {GenevaMetricExporter.MaxDimensionValueSize} characters for dimension value.";
             Assert.Equal(expectedErrorMessage, invalidDimensionValueException.Message);
+        }
+
+        [Fact]
+        public void MetricExportIntervalValidationTest()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                var exporterOptions = new GenevaMetricExporterOptions
+                {
+                    MetricExportIntervalMilliseconds = 999,
+                };
+            });
+
+            var exception = Record.Exception(() =>
+            {
+                var exporterOptions = new GenevaMetricExporterOptions
+                {
+                    MetricExportIntervalMilliseconds = 1000,
+                };
+            });
+
+            Assert.Null(exception);
         }
     }
 }

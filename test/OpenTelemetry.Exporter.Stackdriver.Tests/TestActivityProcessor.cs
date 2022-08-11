@@ -1,4 +1,4 @@
-﻿// <copyright file="TestActivityProcessor.cs" company="OpenTelemetry Authors">
+// <copyright file="TestActivityProcessor.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +16,8 @@
 
 using System;
 using System.Diagnostics;
-using OpenTelemetry.Trace;
 
-namespace OpenTelemetry.Contrib.Exporter.Stackdriver.Tests
+namespace OpenTelemetry.Exporter.Stackdriver.Tests
 {
     public class TestActivityProcessor : BaseProcessor<Activity>, IDisposable
     {

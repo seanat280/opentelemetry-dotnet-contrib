@@ -1,4 +1,4 @@
-﻿// <copyright file="PersistentStorageHelper.cs" company="OpenTelemetry Authors">
+// <copyright file="PersistentStorageHelper.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,11 +40,11 @@ namespace OpenTelemetry.Extensions.PersistentStorage
                     try
                     {
                         File.Delete(filePath);
-                        PersistentStorageEventSource.Log.Warning("Removing blob as retention deadline expired");
+                        PersistentStorageEventSource.Log.PersistentStorageInformation(nameof(PersistentStorageHelper), "Removing blob as retention deadline expired");
                     }
                     catch (Exception ex)
                     {
-                        PersistentStorageEventSource.Log.Warning($"Deletion of file {filePath} has failed.", ex);
+                        PersistentStorageEventSource.Log.CouldNotRemoveExpiredBlob(filePath, ex);
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace OpenTelemetry.Extensions.PersistentStorage
                     }
                     catch (Exception ex)
                     {
-                        PersistentStorageEventSource.Log.Warning("File rename of {filePath} to {newFilePath} has failed.", ex);
+                        PersistentStorageEventSource.Log.CouldNotRemoveExpiredLease(filePath, newFilePath, ex);
                     }
                 }
             }
@@ -88,11 +88,11 @@ namespace OpenTelemetry.Extensions.PersistentStorage
                     {
                         File.Delete(filePath);
                         success = true;
-                        PersistentStorageEventSource.Log.Warning("File write exceeded timeout. Dropping telemetry");
+                        PersistentStorageEventSource.Log.PersistentStorageInformation(nameof(PersistentStorageHelper), "File write exceeded timeout. Dropping telemetry");
                     }
                     catch (Exception ex)
                     {
-                        PersistentStorageEventSource.Log.Warning($"Deletion of file {filePath} has failed.", ex);
+                        PersistentStorageEventSource.Log.CouldNotRemoveTimedOutTmpFile(filePath, ex);
                     }
                 }
             }
@@ -161,25 +161,17 @@ namespace OpenTelemetry.Extensions.PersistentStorage
         internal static string CreateSubdirectory(string path)
         {
             string subdirectoryPath = string.Empty;
-
-            try
-            {
-                string baseDirectory = string.Empty;
+            string baseDirectory = string.Empty;
 #if !NETSTANDARD
-                baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 #else
-                baseDirectory = AppContext.BaseDirectory;
+            baseDirectory = AppContext.BaseDirectory;
 #endif
 
-                string appIdentity = Environment.UserName + "@" + Path.Combine(baseDirectory, Process.GetCurrentProcess().ProcessName);
-                string subdirectoryName = GetSHA256Hash(appIdentity);
-                subdirectoryPath = Path.Combine(path, subdirectoryName);
-                Directory.CreateDirectory(subdirectoryPath);
-            }
-            catch (Exception ex)
-            {
-                PersistentStorageEventSource.Log.Error($"Error creating sub-directory {path}.", ex);
-            }
+            string appIdentity = Environment.UserName + "@" + Path.Combine(baseDirectory, Process.GetCurrentProcess().ProcessName);
+            string subdirectoryName = GetSHA256Hash(appIdentity);
+            subdirectoryPath = Path.Combine(path, subdirectoryName);
+            Directory.CreateDirectory(subdirectoryPath);
 
             directorySize = CalculateFolderSize(subdirectoryPath);
             return subdirectoryPath;
@@ -253,7 +245,7 @@ namespace OpenTelemetry.Extensions.PersistentStorage
             }
             catch (Exception ex)
             {
-                PersistentStorageEventSource.Log.Error("Error calculating folder size.", ex);
+                PersistentStorageEventSource.Log.PersistentStorageException(nameof(PersistentStorageHelper), "Error calculating folder size", ex);
             }
 
             return directorySize;

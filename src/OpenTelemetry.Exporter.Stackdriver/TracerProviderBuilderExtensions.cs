@@ -1,4 +1,4 @@
-﻿// <copyright file="TracerProviderBuilderExtensions.cs" company="OpenTelemetry Authors">
+// <copyright file="TracerProviderBuilderExtensions.cs" company="OpenTelemetry Authors">
 // Copyright The OpenTelemetry Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-using OpenTelemetry.Contrib.Exporter.Stackdriver;
+using OpenTelemetry.Exporter.Stackdriver;
 using OpenTelemetry.Internal;
 
 namespace OpenTelemetry.Trace
