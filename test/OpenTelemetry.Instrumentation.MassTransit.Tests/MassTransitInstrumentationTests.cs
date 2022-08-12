@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using MassTransit;
 using MassTransit.Testing;
 using Moq;
 using OpenTelemetry.Instrumentation.MassTransit.Implementation;
